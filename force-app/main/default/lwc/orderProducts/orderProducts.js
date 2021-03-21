@@ -1,4 +1,4 @@
-import { LightningElement } from 'lwc';
+import { LightningElement,track } from 'lwc';
 
 const data = [
     { id: 1, name: 'Billy Simonns', unitPrice: 40, quantity: 2, totalPrice: 80 },
@@ -20,7 +20,7 @@ const columns = [
     },
     { 
         label: 'Product Name', 
-        fieldName: 'name',
+        fieldName: 'Name',
         sortable: true,
         cellAttributes: { alignment: 'left' },
     },
@@ -70,10 +70,13 @@ export default class DemoApp extends LightningElement {
             return reverse * ((a > b) - (b > a));
         };
     }
+    @track orderProducts = [];
 
     addProduct(event){
         console.log('LGM - orderProduct - addProduct');
-        console.log(event.detail);
+        console.log(JSON.stringify(event.detail));
+
+        this.orderProducts = [...this.orderProducts, event.detail];
     }
 
     onHandleSort(event) {
