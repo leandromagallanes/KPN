@@ -2,19 +2,21 @@
 private class AvailableProductsControllerTest{
     @testSetup 
     static void setup(){
-        
-        List<Product2> testProds = new List<Product2>();
-        for(Integer i=0;i<2;i++) {
-            testProds.add(new Product2(Name = 'TestProd' + i));
-        }
-        insert testProds;        
+        Product2 prod = new Product2(Name = 'TestProd', Family = 'Fam', IsActive = TRUE);
+        insert prod;
+
+        Pricebook2 standardPricebook = new Pricebook2(Id = Test.getStandardPricebookId(),IsActive = true);
+        Update standardPricebook;
+   
+        PricebookEntry standardPrice = new PricebookEntry(Pricebook2Id = standardPricebook.id, Product2Id = prod.Id, UnitPrice = 10000, IsActive = true);
+        insert standardPrice;
     }
 
     @isTest
     static void validateGetProductList() {
         Test.startTest();
-        List<Product2> prodList = AvailableProductsController.getProductList();
+        List<AvailableProductsController.ProductWithPrice> prodList = AvailableProductsController.getProductWithPriceList();
         Test.stopTest();
-        System.assertEquals(2, prodList.size());
+        System.assertEquals(1, prodList.size());
     }
 }
