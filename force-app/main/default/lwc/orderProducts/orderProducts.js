@@ -20,7 +20,7 @@ const columns = [
     },
     { 
         label: 'Product Name', 
-        fieldName: 'Name',
+        fieldName: 'name',
         sortable: true,
         cellAttributes: { alignment: 'left' },
     },
@@ -46,6 +46,7 @@ const columns = [
         cellAttributes: { alignment: 'left' },
     },
 ];
+
 
 export default class DemoApp extends LightningElement {
     data = data;
@@ -75,17 +76,38 @@ export default class DemoApp extends LightningElement {
     addProduct(event){
         console.log('LGM - orderProduct - addProduct');
         console.log(JSON.stringify(event.detail));
-
-        this.orderProducts = [...this.orderProducts, event.detail];
+        
+        var found = false;
+        this.orderProducts.forEach(element => {
+            //console.log('LGM : element.Id = ' + element.id);
+            //console.log('LGM : event.detail.Id = ' + event.detail.id);
+            if(element.id === event.detail.id){
+                element.quantity++;
+                element.totalPrice = element.unitPrice * element.quantity;
+                this.orderProducts = [...this.orderProducts];
+                found = true;
+            }
+        });
+        if(found === false){
+            event.detail.quantity = 1;
+            event.detail.totalPrice = event.detail.unitPrice * event.detail.quantity;
+            this.orderProducts = [...this.orderProducts, event.detail]; 
+        }
+        
+        //console.log(JSON.stringify(event.detail));
     }
 
     onHandleSort(event) {
         const { fieldName: sortedBy, sortDirection } = event.detail;
         const cloneData = [...this.data];
-
+        
         cloneData.sort(this.sortBy(sortedBy, sortDirection === 'asc' ? 1 : -1));
         this.data = cloneData;
         this.sortDirection = sortDirection;
         this.sortedBy = sortedBy;
+    }
+
+    onHandleActivateButton(event) {
+        
     }
 }
