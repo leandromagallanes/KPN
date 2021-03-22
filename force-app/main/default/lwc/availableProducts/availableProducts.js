@@ -1,5 +1,4 @@
 import { LightningElement, wire, track } from 'lwc';
-import getProductList from '@salesforce/apex/AvailableProductsController.getProductList'
 import getProductWithPriceList from '@salesforce/apex/AvailableProductsController.getProductWithPriceList'
 
 const data = [

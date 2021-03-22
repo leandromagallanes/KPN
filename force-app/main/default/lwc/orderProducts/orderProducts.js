@@ -1,4 +1,5 @@
-import { LightningElement,track } from 'lwc';
+import { LightningElement,track,wire,api } from 'lwc';
+import getActivateOrder from '@salesforce/apex/OrderProductsController.getActivateOrder'
 
 const data = [
     { id: 1, name: 'Billy Simonns', unitPrice: 40, quantity: 2, totalPrice: 80 },
@@ -54,6 +55,8 @@ export default class DemoApp extends LightningElement {
     defaultSortDirection = 'asc';
     sortDirection = 'asc';
     sortedBy;
+    @wire(getActivateOrder)
+    
 
     // Used to sort the 'Age' column
     sortBy(field, reverse, primer) {
@@ -107,7 +110,14 @@ export default class DemoApp extends LightningElement {
         this.sortedBy = sortedBy;
     }
 
-    onHandleActivateButton(event) {
-        
+    @api recordId
+    onHandleActivateButton() {
+        console.log('ACTIVATE BUTTON');
+        getActivateOrder({pwpList: this.orderProducts, orderId: this.recordId}).then(result => {
+            console.log(result);
+        })
+        .catch(error => {
+            this.error = error;
+        });
     }
 }

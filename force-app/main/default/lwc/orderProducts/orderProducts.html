@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="height:500px">
     <div class="slds-grid slds-gutters">
         <div class="slds-col slds-size_1-of-2">
             <c-available-products onproductadded={addProduct}></c-available-products>
@@ -15,7 +15,7 @@
             sorted-by={sortedBy}
             onsort={onHandleSort}>
             </lightning-datatable>
-            <lightning-button label="Activate" onclick={onHandleActivateButton} class="slds-float_left"></lightning-button>
+            <lightning-button label="Activate" onclick={onHandleActivateButton} class="slds-float_right"></lightning-button>
         </div>
       </div>
     </div>

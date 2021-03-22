@@ -5,7 +5,7 @@ public with sharing class AvailableProductsController {
 
     @auraEnabled(cacheable=true)
     public static List<ProductWithPrice> getProductWithPriceList(){
-        List<Pricebookentry> pbeList = [SELECT id, unitPrice, Product2.name, pricebook2.isstandard FROM Pricebookentry WHERE Product2.isActive = TRUE AND pricebook2.isstandard = TRUE AND isActive = TRUE];
+        List<Pricebookentry> pbeList = [SELECT id, unitPrice, Product2.name, pricebook2.isstandard FROM Pricebookentry WHERE Product2.isActive = TRUE AND pricebook2.isstandard = TRUE AND isActive = TRUE ORDER BY Product2.name ASC];
         List<ProductWithPrice> productsWithPriceToReturn = new List<ProductWithPrice>();
         for(Pricebookentry p : pbeList){
             ProductWithPrice pwp = new ProductWithPrice();
@@ -23,6 +23,7 @@ public with sharing class AvailableProductsController {
         @auraenabled public String id {get; set;}
         @auraenabled public String name {get; set;}
         @auraenabled public Decimal unitPrice {get; set;}
+        @auraenabled public Decimal totalPrice {get; set;}
+        @auraenabled public Integer quantity {get; set;}
     }
 }
-
