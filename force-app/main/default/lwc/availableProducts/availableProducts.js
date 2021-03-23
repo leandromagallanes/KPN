@@ -1,13 +1,8 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, wire, track, api } from 'lwc';
 import getProductWithPriceList from '@salesforce/apex/AvailableProductsController.getProductWithPriceList'
 
-const data = [
-    { id: 1, name: 'Billy Simonns', price: 40 },
-    { id: 2, name: 'Kelsey Denesik', price: 35 },
-    { id: 3, name: 'Kyle Ruecker', price: 50},
-    { id: 4, name: 'Krystina Kerluke', price: 37,
-    },
-];
+
+const data = [];
 
 const columns = [
     {
@@ -42,6 +37,7 @@ export default class AvailableProducts extends LightningElement {
     sortedBy;
 
     @track products;
+    
 
     @wire(getProductWithPriceList)
     products({error,data}) {

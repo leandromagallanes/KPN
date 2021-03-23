@@ -1,8 +1,4 @@
 public with sharing class AvailableProductsController {
-    public AvailableProductsController() {
-
-    }
-
     @auraEnabled(cacheable=true)
     public static List<ProductWithPrice> getProductWithPriceList(){
         List<Pricebookentry> pbeList = [SELECT id, unitPrice, Product2.name, pricebook2.isstandard FROM Pricebookentry WHERE Product2.isActive = TRUE AND pricebook2.isstandard = TRUE AND isActive = TRUE ORDER BY Product2.name ASC];
@@ -16,7 +12,7 @@ public with sharing class AvailableProductsController {
             productsWithPriceToReturn.add(pwp);
         }
         return productsWithPriceToReturn;
-    }
+    }    
 
     //Wrapper class to set the product with the unitprice from the standard pricebook
     public with sharing class ProductWithPrice {

@@ -1,13 +1,9 @@
 import { LightningElement,track,wire,api } from 'lwc';
+import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
 import getActivateOrder from '@salesforce/apex/OrderProductsController.getActivateOrder'
+import STATUS_FIELD from '@salesforce/schema/Order.Status';
 
-const data = [
-    { id: 1, name: 'Billy Simonns', unitPrice: 40, quantity: 2, totalPrice: 80 },
-    { id: 2, name: 'Kelsey Denesik', unitPrice: 35 , quantity: 2, totalPrice: 80},
-    { id: 3, name: 'Kyle Ruecker', unitPrice: 50, quantity: 2, totalPrice: 80},
-    { id: 4, name: 'Krystina Kerluke', unitPrice: 37, quantity: 2, totalPrice: 80
-    },
-];
+const data = [];
 const columns = [
     {
         label: 'Remove',
@@ -55,9 +51,15 @@ export default class DemoApp extends LightningElement {
     defaultSortDirection = 'asc';
     sortDirection = 'asc';
     sortedBy;
-    @wire(getActivateOrder)
     
+    @api recordId;
+    @wire(getRecord, { recordId: '$recordId', fields: [STATUS_FIELD]})
+    order;
 
+    get isOrderActivated() {
+        return getFieldValue(this.order.data, STATUS_FIELD) == 'Activated';
+    }
+    
     // Used to sort the 'Age' column
     sortBy(field, reverse, primer) {
         const key = primer
@@ -77,27 +79,26 @@ export default class DemoApp extends LightningElement {
     @track orderProducts = [];
 
     addProduct(event){
-        console.log('LGM - orderProduct - addProduct');
-        console.log(JSON.stringify(event.detail));
-        
-        var found = false;
-        this.orderProducts.forEach(element => {
-            //console.log('LGM : element.Id = ' + element.id);
-            //console.log('LGM : event.detail.Id = ' + event.detail.id);
-            if(element.id === event.detail.id){
-                element.quantity++;
-                element.totalPrice = element.unitPrice * element.quantity;
-                this.orderProducts = [...this.orderProducts];
-                found = true;
+        if(getFieldValue(this.order.data, STATUS_FIELD) != 'Activated'){
+            console.log('LGM - orderProduct - addProduct');
+            console.log(JSON.stringify(event.detail));
+            
+            var found = false;
+            this.orderProducts.forEach(element => {
+                if(element.id === event.detail.id){
+                    element.quantity++;
+                    element.totalPrice = element.unitPrice * element.quantity;
+                    this.orderProducts = [...this.orderProducts];
+                    found = true;
+                }
+            });
+            if(found === false){
+                event.detail.quantity = 1;
+                event.detail.totalPrice = event.detail.unitPrice * event.detail.quantity;
+                this.orderProducts = [...this.orderProducts, event.detail]; 
             }
-        });
-        if(found === false){
-            event.detail.quantity = 1;
-            event.detail.totalPrice = event.detail.unitPrice * event.detail.quantity;
-            this.orderProducts = [...this.orderProducts, event.detail]; 
         }
         
-        //console.log(JSON.stringify(event.detail));
     }
 
     onHandleSort(event) {
@@ -110,11 +111,11 @@ export default class DemoApp extends LightningElement {
         this.sortedBy = sortedBy;
     }
 
-    @api recordId
+    @wire(getActivateOrder)
     onHandleActivateButton() {
         console.log('ACTIVATE BUTTON');
         getActivateOrder({pwpList: this.orderProducts, orderId: this.recordId}).then(result => {
-            console.log(result);
+            console.log('ACTIVATE - Result : ' + result);
         })
         .catch(error => {
             this.error = error;

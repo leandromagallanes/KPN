@@ -15,7 +15,9 @@
             sorted-by={sortedBy}
             onsort={onHandleSort}>
             </lightning-datatable>
-            <lightning-button label="Activate" onclick={onHandleActivateButton} class="slds-float_right"></lightning-button>
+            <template if:false={isOrderActivated}>
+                <lightning-button label="Activate" onclick={onHandleActivateButton} class="slds-float_right" style="margin:5px"></lightning-button>
+            </template>
         </div>
       </div>
     </div>

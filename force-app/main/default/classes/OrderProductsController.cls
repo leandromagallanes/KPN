@@ -1,11 +1,7 @@
 public with sharing class OrderProductsController {
-    public OrderProductsController() {
-
-    }
-
     //cacheable=false, to be allowed to execute DML operations
     @auraEnabled(cacheable=false)
-    public static void getActivateOrder(List<AvailableProductsController.ProductWithPrice> pwpList, Id orderId){
+    public static Boolean getActivateOrder(List<AvailableProductsController.ProductWithPrice> pwpList, Id orderId){
         List<OrderItem> orderItemList = new List<OrderItem>();
         Order ord = [SELECT id, Pricebook2Id, status from Order where id =: orderId];
         PriceBook2 pb2Standard = [select Id from Pricebook2 where isStandard=true];
@@ -18,15 +14,7 @@ public with sharing class OrderProductsController {
         }
         Map<Id,Product2> productById = new Map<id,product2>([select id from Product2]);
 
-
-
         for(AvailableProductsController.ProductWithPrice pwp : pwpList){
-            System.debug('LGM - id : ' + pwp.id);
-            System.debug('LGM - name : ' + pwp.name);
-            System.debug('LGM - quantity : ' + pwp.quantity);
-            System.debug('LGM - unitPrice : ' + pwp.unitPrice);
-            System.debug('LGM - totalPrice : ' + pwp.totalPrice);
-
             Id standardPriceBookId = pb2Standard.Id;
         
             if (ord.Pricebook2Id == null) {
@@ -42,12 +30,47 @@ public with sharing class OrderProductsController {
             orderItemList.add(oi);
         }
         
+        //TO REVIEW
         update ord;
         insert orderItemList;
         ord.status = 'Activated';
         update ord;
-        //sendRequest(ord);
+
+        Database.SaveResult[] srList = Database.update(orderItemList, false);
+ 
+        for (Database.SaveResult sr : srList) {
+            if (sr.isSuccess()) {
+                return true;
+            }
+        }
+            return false;
+    }
+    
+    @auraEnabled(cacheable=true)
+    public static Boolean getIsOrderActivated(Id orderId){
+        Order order = [SELECT status from Order where id =: orderId];
+        return order.status == 'Activated';
     }
 
-    
+    //TBD - Confirmation callout
+    /*
+    @auraEnabled(cacheable=false)
+    public static void sendRequest(Order ord){
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('https://kpntest.requestcatcher.com/');
+        request.setMethod('POST');
+        request.setHeader('Content-Type', 'application/json;charset=UTF-8');
+        // Set the body as a JSON object
+        //request.setBody('{"name":"mighty moose"}');
+        request.setBody(JSON.serialize(ord));
+        HttpResponse response = http.send(request);
+        // Parse the JSON response
+        if (response.getStatusCode() != 201) {
+            System.debug('The status code returned was not expected: ' +
+                response.getStatusCode() + ' ' + response.getStatus());
+        } else {
+            System.debug(response.getBody());
+        }
+    }*/
 }
