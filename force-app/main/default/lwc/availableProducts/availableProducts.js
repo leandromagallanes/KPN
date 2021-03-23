@@ -52,13 +52,13 @@ export default class AvailableProducts extends LightningElement {
         }
     }
 
+    //Dispatches the event to let the OrderProduct component know that a product should be added
     handleRowAction(event){
         const dataRow = event.detail.row;
-        console.log('dataRow@@ ' + JSON.stringify(dataRow));
         this.dispatchEvent(new CustomEvent('productadded', {detail: dataRow}));
    }
 
-    // Used to sort the 'Age' column
+    // Used to sort - TBD
     sortBy(field, reverse, primer) {
         const key = primer
             ? function(x) {
@@ -74,7 +74,8 @@ export default class AvailableProducts extends LightningElement {
             return reverse * ((a > b) - (b > a));
         };
     }
-
+    
+    // Used to sort - TBD
     onHandleSort(event) {
         const { fieldName: sortedBy, sortDirection } = event.detail;
         const cloneData = [...this.data];

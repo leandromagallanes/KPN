@@ -25,9 +25,6 @@ private class OrderProductsControllerTest{
         
         OrderItem oi = new OrderItem(Quantity = 1, UnitPrice = 10, OrderId = ord.id, Product2Id = prod.id, PricebookEntryId = standardPrice.id);
         insert oi;
-        
-        /*ord.Status = 'Activated';
-        update ord;*/
     }
 
     @isTest
@@ -56,9 +53,9 @@ private class OrderProductsControllerTest{
         pwp.totalPrice = 50;
         pwpList.add(pwp);
         
-        OrderProductsController.getActivateOrder(pwpList, ord.id);
-
+        Boolean isInserted = OrderProductsController.getActivateOrder(pwpList, ord.id);
         Test.stopTest();
-        //System.assertEquals(true, isOrderActivated);
+
+        System.assertEquals(true, isInserted);
     }
 }
