@@ -1,14 +1,24 @@
 <template>
-    <c-available-products onproductadded={addProduct}></c-available-products>
-    <lightning-datatable
+    <div style="height:500px">
+    <div class="slds-grid slds-gutters">
+        <div class="slds-col slds-size_1-of-2">
+            <c-available-products onproductadded={addProduct}></c-available-products>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+            <lightning-datatable
             key-field="id"
             columns={columns}
-            data={data}
+            data={orderProducts}
             hide-checkbox-column
             default-sort-direction={defaultSortDirection}
             sorted-direction={sortDirection}
             sorted-by={sortedBy}
             onsort={onHandleSort}>
-    </lightning-datatable>
+            </lightning-datatable>
+            <template if:false={isOrderActivated}>
+                <lightning-button label="Activate" onclick={onHandleActivateButton} class="slds-float_right" style="margin:5px"></lightning-button>
+            </template>
+        </div>
+      </div>
+    </div>
 </template>
-

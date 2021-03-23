@@ -1,13 +1,8 @@
-import { LightningElement, wire, track } from 'lwc';
-import getProductList from '@salesforce/apex/AvailableProductsController.getProductList'
+import { LightningElement, wire, track, api } from 'lwc';
+import getProductWithPriceList from '@salesforce/apex/AvailableProductsController.getProductWithPriceList'
 
-const data = [
-    { id: 1, name: 'Billy Simonns', price: 40 },
-    { id: 2, name: 'Kelsey Denesik', price: 35 },
-    { id: 3, name: 'Kyle Ruecker', price: 50},
-    { id: 4, name: 'Krystina Kerluke', price: 37,
-    },
-];
+
+const data = [];
 
 const columns = [
     {
@@ -22,12 +17,12 @@ const columns = [
     },
     { 
         label: 'Product Name', 
-        fieldName: 'Name',
+        fieldName: 'name',
         sortable: true,
     },
     {
         label: 'List Price',
-        fieldName: 'price',
+        fieldName: 'unitPrice',
         type: 'currency',
         sortable: true,
         cellAttributes: { alignment: 'left' },
@@ -42,8 +37,9 @@ export default class AvailableProducts extends LightningElement {
     sortedBy;
 
     @track products;
+    
 
-    @wire(getProductList)
+    @wire(getProductWithPriceList)
     products({error,data}) {
         console.log('Data : ' + JSON.stringify(data));
         if(data){
