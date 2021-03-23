@@ -1,2 +1,2 @@
 # KPN
-Repository created to commit the KPN assesment code 
+Repository created to commit the KPN assessment code 
